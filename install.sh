@@ -205,6 +205,8 @@ function provisioning_get_comfyui() {
     else
         echo "-= Initial setup ComfyUI =-"
         git clone https://github.com/comfyanonymous/ComfyUI.git "$COMFYUI_DIR"
+        # ติดตั้ง dependencies เพิ่มเติม
+        /usr/bin/python3 -m pip install -r requirements.txt
     fi
 }
 
