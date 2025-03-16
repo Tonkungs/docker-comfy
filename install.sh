@@ -1,12 +1,11 @@
 #!/bin/bash
-
+python3 -m venv /venv/main
 source /venv/main/bin/activate
 
 # กำหนด WORKSPACE
 WORKSPACE=$(pwd)/ComfyUI
 COMFYUI_DIR=${WORKSPACE}
 AUTO_UPDATE="${AUTO_UPDATE:-true}"
-# /ComfyUI
 
 # Packages are installed after nodes so we can fix them...
 
@@ -18,29 +17,10 @@ APT_PACKAGES=(
 PIP_PACKAGES=(
     #"package-1"
     #"package-2"
-    accelerate 
-    einops 
-    transformers 
-    safetensors 
-    aiohttp 
-    pyyaml 
-    Pillow 
-    scipy 
-    tqdm 
-    psutil 
-    tokenizers 
-    torch 
-    torchvision 
-    torchaudio 
-    torchsde 
-    kornia 
-    spandrel 
-    soundfile 
-    sentencepiece
 )
 
 NODES=(
-    "https://github.com/ltdrdata/ComfyUI-Manager"
+    # "https://github.com/ltdrdata/ComfyUI-Manager"
     #"https://github.com/cubiq/ComfyUI_essentials"
 )
 
@@ -101,7 +81,7 @@ function provisioning_get_apt_packages() {
 
 function provisioning_get_pip_packages() {
     if [[ -n $PIP_PACKAGES ]]; then
-            pip install --no-cache-dir ${PIP_PACKAGES[@]} --index-url https://download.pytorch.org/whl/cu121
+            pip install --no-cache-dir ${PIP_PACKAGES[@]}
     fi
 }
 
@@ -206,7 +186,22 @@ function provisioning_get_comfyui() {
         echo "-= Initial setup ComfyUI =-"
         git clone https://github.com/comfyanonymous/ComfyUI.git "$COMFYUI_DIR"
         # ติดตั้ง dependencies เพิ่มเติม
+        echo "Current working directory: $(pwd)"
+        cd $COMFYUI_DIR
+        echo "Current working directory: $(pwd)"
+        echo $pwd
+        echo "-= Install Dependencies ComfyUI =-"
+
+        pip3 install accelerate
+        pip3 install einops transformers>=4.28.1 safetensors>=0.4.2 aiohttp pyyaml Pillow scipy tqdm psutil tokenizers>=0.13.3
+        pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+        pip3 install torchsde
+        pip3 install kornia>=0.7.1 spandrel soundfile sentencepiece
+        # python3 -m venv /venv/main
+        # source /venv/main/bin/activate
+        # /usr/bin/python3 -m pip install --upgrade pip
         /usr/bin/python3 -m pip install -r requirements.txt
+        # /venv/main/bin/python -m pip install -r requirements.txt
     fi
 }
 
