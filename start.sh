@@ -34,9 +34,9 @@ done
 echo "Cloudflared generated URL: $CLOUDFLARE_URL"
 
 # ส่งไปยัง API
-echo "Sending URL to https://asdasd.com/api..."
-curl -X POST "https://asdasd.com/api" \
-  -H "Content-Type: application/json" \
-  -d "{\"url\":\"$CLOUDFLARE_URL\"}"
+# echo "Sending URL to https://asdasd.com/api..."
+# curl -X POST "https://asdasd.com/api" \
+#   -H "Content-Type: application/json" \
+#   -d "{\"url\":\"$CLOUDFLARE_URL\"}"
 
-echo "URL sent successfully!"
+# echo "URL sent successfully!"
