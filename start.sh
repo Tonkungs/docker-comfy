@@ -15,20 +15,28 @@ done
 
 echo -e "\nComfyUI finished loading, trying to launch cloudflared...\n"
 
-# เปิด cloudflared และจับเฉพาะ URL ที่แสดงออกมา
-CLOUDFLARE_URL=$(cloudflared tunnel --url http://127.0.0.1:18188 2>&1 | grep -o 'https://.*\.trycloudflare\.com' | head -n 1)
+# รัน cloudflared แบบ background (&)
+cloudflared tunnel --url http://127.0.0.1:18188 > cloudflared.log 2>&1 &
 
-# แสดง URL ก่อนเข้าเงื่อนไข if
+# แจ้งให้ผู้ใช้รู้ว่ากำลังรอ URL
+echo "Waiting for Cloudflared to generate URL..."
+
+# รอให้ cloudflared สร้าง URL
+while true; do
+  CLOUDFLARE_URL=$(grep -o 'https://.*\.trycloudflare\.com' cloudflared.log | head -n 1)
+  if [[ -n "$CLOUDFLARE_URL" ]]; then
+    break
+  fi
+  sleep 0.5
+done
+
+# แสดง URL ทันที
 echo "Cloudflared generated URL: $CLOUDFLARE_URL"
 
-# ถ้าได้ URL มาแล้ว ส่งไปที่ API
-# if [[ -n "$CLOUDFLARE_URL" ]]; then
-#   echo "Sending URL to https://asdasd.com/api..."
-#   curl -X POST "https://asdasd.com/api" \
-#     -H "Content-Type: application/json" \
-#     -d "{\"url\":\"$CLOUDFLARE_URL\"}"
-  
-#   echo "URL sent successfully!"
-# else
-#   echo "Failed to retrieve Cloudflared URL"
-# fi
+# ส่งไปยัง API
+echo "Sending URL to https://asdasd.com/api..."
+curl -X POST "https://asdasd.com/api" \
+  -H "Content-Type: application/json" \
+  -d "{\"url\":\"$CLOUDFLARE_URL\"}"
+
+echo "URL sent successfully!"
