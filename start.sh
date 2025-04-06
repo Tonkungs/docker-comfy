@@ -10,6 +10,7 @@ dpkg -i ~/cloudflared-linux-amd64.deb
 # ฟังก์ชันเช็คการรัน ComfyUI และเปิด cloudflared
 echo "Waiting for ComfyUI to start..."
 while ! curl --silent --head http://127.0.0.1:18188; do
+  echo "Waiting for ComfyUI to start... "
   sleep 0.5
 done
 
