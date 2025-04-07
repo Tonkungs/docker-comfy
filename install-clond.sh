@@ -345,20 +345,39 @@ function provisioning_run_comfyui(){
     echo "🚀 Sending request to ComfyUI at $COMFYUI_URL/prompt..."
 
     # ใช้ curl พร้อม --max-time 420 (7 นาที) และ --retry 0 เพื่อรอผลลัพธ์นาน ๆ
-    RESPONSE=$(curl -s -X POST $COMFYUI_URL/prompt \
+    HTTP_CODE=$(curl -s -w "%{http_code}" -X POST $COMFYUI_URL/prompt \
     -H "Content-Type: application/json" \
     --data-binary "@$JSON_FILE" \
-    --max-time 420)
+    --max-time 420 \
+    -o response.tmp)
 
-    # เช็คผลลัพธ์
-    if [ $? -eq 0 ] && [[ "$RESPONSE" == *"success"* || "$RESPONSE" == *"output"* ]]; then
-    echo "✅ ComfyUI responded successfully."
+    # Check if HTTP status code is 2xx
+    if [[ $HTTP_CODE =~ ^2[0-9]{2}$ ]]; then
+        echo "✅ ComfyUI responded successfully with status code $HTTP_CODE"
+        PROMPT_ID=$(cat response.tmp | grep -o '"prompt_id":"[^"]*' | cut -d'"' -f4)
+        echo "Prompt ID: $PROMPT_ID"
+        cat response.tmp
     else
-    echo "❌ ComfyUI response failed or timed out."
-    echo "Response:"
-    echo "$RESPONSE"
+        echo "❌ ComfyUI request failed with status code $HTTP_CODE"
+        cat response.tmp
     fi
+    rm -f response.tmp
 
+
+    # Wait for the completion status
+    echo "Waiting for ComfyUI processing completion..."
+    while true; do
+        response=$(curl -s "$COMFYUI_URL/history/$PROMPT_ID")
+        completed=$(echo $response | grep -o '"completed":true' || echo "")
+        
+        if [ ! -z "$completed" ]; then
+            echo "✅ Processing completed successfully"
+            break
+        else
+            echo "⏳ Still processing... waiting 10 seconds"
+            sleep 10
+        fi
+    done
 }
 
 # Allow user to disable provisioning if they started with a script they didn't want
