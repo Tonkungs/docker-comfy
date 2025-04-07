@@ -364,13 +364,32 @@ function provisioning_run_comfyui(){
     rm -f response.tmp
 
 
-    # Wait for the completion status
+    # http://127.0.0.1:18188/history/4d210c98-1c69-40e0-9347-1607f021ece7
+
+    # body returned from comfyui
+    # {
+    #     "4d210c98-1c69-40e0-9347-1607f021ece7":{
+    #         "status":{
+    #             "status_str":"success",
+    #             "completed":true
+    #         }
+    #     }
+    # }
+     # Wait for the completion status
     echo "Waiting for ComfyUI processing completion..."
     while true; do
         response=$(curl -s "$COMFYUI_URL/history/$PROMPT_ID")
-        completed=$(echo $response | grep -o '"completed":true' || echo "")
         
-        if [ ! -z "$completed" ]; then
+        # ตรวจสอบว่า response ว่างไหม
+        if [ -z "$response" ]; then
+            echo "❌ No response from ComfyUI — check if it's running."
+            break
+        fi
+
+        # ดึงค่า completed จาก response
+        completed=$(echo "$response" | jq -r --arg id "$PROMPT_ID" '.[$id].status.completed')
+
+        if [ "$completed" == "true" ]; then
             echo "✅ Processing completed successfully"
             break
         else
