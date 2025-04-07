@@ -10,9 +10,11 @@ MAIN_SERVER="https://gary-indonesia-kurt-coming.trycloudflare.com"
 CLOUDFLARE_URL=""
 CLOUDFLARE_DOWNLOAD_URL="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
 PUBLIC_IP=""
-COMFYUI_URL="http://127.0.0.1:18188"
+# COMFYUI_URL="http://127.0.0.1:18188"
+COMFYUI_URL="https://cancel-textiles-proof-programs.trycloudflare.com"
 JSON_URL="https://raw.githubusercontent.com/Tonkungs/docker-comfy/refs/heads/main/flux_dev_promt.json"
 JSON_FILE="flux_payload.json"
+PROMPT_ID=""
 # Packages are installed after nodes so we can fix them...
 
 APT_PACKAGES=(
@@ -84,6 +86,7 @@ function provisioning_start() {
     provisioning_save_server
 
     provisioning_run_comfyui
+    provisioning_ready_activate
 }
 
 function provisioning_get_apt_packages() {
@@ -354,7 +357,7 @@ function provisioning_run_comfyui(){
     # Check if HTTP status code is 2xx
     if [[ $HTTP_CODE =~ ^2[0-9]{2}$ ]]; then
         echo "✅ ComfyUI responded successfully with status code $HTTP_CODE"
-        PROMPT_ID=$(cat response.tmp | grep -o '"prompt_id":"[^"]*' | cut -d'"' -f4)
+        PROMPT_ID=$(jq -r '.prompt_id' response.tmp)
         echo "Prompt ID: $PROMPT_ID"
         cat response.tmp
     else
@@ -363,23 +366,13 @@ function provisioning_run_comfyui(){
     fi
     rm -f response.tmp
 
-
-    # http://127.0.0.1:18188/history/4d210c98-1c69-40e0-9347-1607f021ece7
-
-    # body returned from comfyui
-    # {
-    #     "4d210c98-1c69-40e0-9347-1607f021ece7":{
-    #         "status":{
-    #             "status_str":"success",
-    #             "completed":true
-    #         }
-    #     }
-    # }
      # Wait for the completion status
     echo "Waiting for ComfyUI processing completion..."
+    echo "$COMFYUI_URL/history/$PROMPT_ID"
     while true; do
+    
         response=$(curl -s "$COMFYUI_URL/history/$PROMPT_ID")
-        
+        echo "Response: $response"
         # ตรวจสอบว่า response ว่างไหม
         if [ -z "$response" ]; then
             echo "❌ No response from ComfyUI — check if it's running."
