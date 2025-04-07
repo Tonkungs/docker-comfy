@@ -11,7 +11,7 @@ CLOUDFLARE_URL=""
 CLOUDFLARE_DOWNLOAD_URL="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
 PUBLIC_IP=""
 COMFYUI_URL="http://127.0.0.1:18188"
-JSON_URL="https://raw.githubusercontent.com/Tonkungs/docker-comfy/refs/heads/main/flux_dev_example.json"
+JSON_URL="https://raw.githubusercontent.com/Tonkungs/docker-comfy/refs/heads/main/flux_dev_promt.json"
 JSON_FILE="flux_payload.json"
 # Packages are installed after nodes so we can fix them...
 
