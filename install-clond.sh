@@ -342,10 +342,10 @@ function provisioning_run_comfyui(){
     fi
 
     # ส่ง JSON ไปยัง ComfyUI (localhost:18188) ด้วย POST
-    echo "🚀 Sending request to ComfyUI at $COMFYUI_URL..."
+    echo "🚀 Sending request to ComfyUI at $COMFYUI_URL/prompt..."
 
     # ใช้ curl พร้อม --max-time 420 (7 นาที) และ --retry 0 เพื่อรอผลลัพธ์นาน ๆ
-    RESPONSE=$(curl -s -X POST $COMFYUI_URL \
+    RESPONSE=$(curl -s -X POST $COMFYUI_URL/prompt \
     -H "Content-Type: application/json" \
     --data-binary "@$JSON_FILE" \
     --max-time 420)
