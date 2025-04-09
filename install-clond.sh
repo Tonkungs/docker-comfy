@@ -6,12 +6,12 @@ source /venv/main/bin/activate
 WORKSPACE=$(pwd)/ComfyUI
 COMFYUI_DIR=${WORKSPACE}
 AUTO_UPDATE="${AUTO_UPDATE:-true}"
-MAIN_SERVER="https://gary-indonesia-kurt-coming.trycloudflare.com"
+MAIN_SERVER="https://fish-composite-falling-luck.trycloudflare.com"
 CLOUDFLARE_URL=""
 CLOUDFLARE_DOWNLOAD_URL="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
 PUBLIC_IP=""
-# COMFYUI_URL="http://127.0.0.1:18188"
-COMFYUI_URL="https://cancel-textiles-proof-programs.trycloudflare.com"
+COMFYUI_URL="http://127.0.0.1:18188"
+# COMFYUI_URL="https://cancel-textiles-proof-programs.trycloudflare.com"
 JSON_URL="https://raw.githubusercontent.com/Tonkungs/docker-comfy/refs/heads/main/flux_dev_promt.json"
 JSON_FILE="flux_payload.json"
 PROMPT_ID=""
@@ -51,36 +51,35 @@ VAE_MODELS=(
 
 function provisioning_start() {
     provisioning_print_header
-    # provisioning_get_apt_packages
-    # provisioning_get_nodes
-    # provisioning_get_pip_packages
+    provisioning_get_apt_packages
+    provisioning_get_nodes
+    provisioning_get_pip_packages
     # provisioning_get_comfyui
-    # workflows_dir="${COMFYUI_DIR}/user/default/workflows"
-    # mkdir -p "${workflows_dir}"
-    # provisioning_get_files \
-    #     "${workflows_dir}" \
-    #     "${WORKFLOWS[@]}"
-    # # Get licensed models if HF_TOKEN set & valid
-    # if provisioning_has_valid_hf_token; then
-    #     UNET_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors")
-    #     VAE_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors")
-    # else
-    #     UNET_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/flux1-schnell.safetensors")
-    #     VAE_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors")
-    #     sed -i 's/flux1-dev\.safetensors/flux1-schnell.safetensors/g' "${workflows_dir}/flux_dev_example.json"
-    # fi
-    # provisioning_get_files \
-    #     "${COMFYUI_DIR}/models/unet" \
-    #     "${UNET_MODELS[@]}"
-    # provisioning_get_files \
-    #     "${COMFYUI_DIR}/models/vae" \
-    #     "${VAE_MODELS[@]}"
-    # provisioning_get_files \
-    #     "${COMFYUI_DIR}/models/clip" \
-    #     "${CLIP_MODELS[@]}"
-    # provisioning_print_end
+    workflows_dir="${COMFYUI_DIR}/user/default/workflows"
+    mkdir -p "${workflows_dir}"
+    provisioning_get_files \
+        "${workflows_dir}" \
+        "${WORKFLOWS[@]}"
+    # Get licensed models if HF_TOKEN set & valid
+    if provisioning_has_valid_hf_token; then
+        UNET_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors")
+        VAE_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors")
+    else
+        UNET_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/flux1-schnell.safetensors")
+        VAE_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors")
+        sed -i 's/flux1-dev\.safetensors/flux1-schnell.safetensors/g' "${workflows_dir}/flux_dev_example.json"
+    fi
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/unet" \
+        "${UNET_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/vae" \
+        "${VAE_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/clip" \
+        "${CLIP_MODELS[@]}"
+    provisioning_print_end
 
-    
     provisioning_url_clound_flare
     provisioning_get_public_ip
     provisioning_save_server
