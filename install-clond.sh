@@ -69,23 +69,23 @@ function provisioning_start() {
         VAE_MODELS+=("https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors")
         sed -i 's/flux1-dev\.safetensors/flux1-schnell.safetensors/g' "${workflows_dir}/flux_dev_example.json"
     fi
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/unet" \
-        "${UNET_MODELS[@]}"
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/vae" \
-        "${VAE_MODELS[@]}"
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/clip" \
-        "${CLIP_MODELS[@]}"
+    # provisioning_get_files \
+    #     "${COMFYUI_DIR}/models/unet" \
+    #     "${UNET_MODELS[@]}"
+    # provisioning_get_files \
+    #     "${COMFYUI_DIR}/models/vae" \
+    #     "${VAE_MODELS[@]}"
+    # provisioning_get_files \
+    #     "${COMFYUI_DIR}/models/clip" \
+    #     "${CLIP_MODELS[@]}"
     provisioning_print_end
 
-    provisioning_url_clound_flare
-    provisioning_get_public_ip
-    provisioning_save_server
+    # provisioning_url_clound_flare
+    # provisioning_get_public_ip
+    # provisioning_save_server
 
-    provisioning_run_comfyui
-    provisioning_ready_activate
+    # provisioning_run_comfyui
+    # provisioning_ready_activate
 }
 
 function provisioning_get_apt_packages() {
